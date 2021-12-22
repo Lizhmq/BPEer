@@ -32,17 +32,19 @@ def convert():
             assert b in init_vocab
         except AssertionError:
             print(a, b)
-        init_vocab.append((a + b))
+        if a + b not in init_vocab:
+            init_vocab.append((a + b))
     for a, b in merges:
-        tmpvocab["model"]["merges"].append(a + " " + b)
-        tmpvocab["model"]["vocab"][a + b] = curidx
-        curidx += 1
+        if a + b not in tmpvocab["model"]["vocab"]:
+            tmpvocab["model"]["merges"].append(a + " " + b)
+            tmpvocab["model"]["vocab"][a + b] = curidx
+            curidx += 1
 
     t = json.dump(tmpvocab, open(outfile, "w"), indent=4)
 
 
 def test():
-    tokenizer = Tokenizer.from_file("pathvocab.json")
+    tokenizer = Tokenizer.from_file("vocab.json")
     t = tokenizer.encode(
         "program|block|if_statement|block|expression_statement|method_invocation|. program|"
     ).tokens

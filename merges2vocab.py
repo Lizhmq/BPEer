@@ -26,13 +26,13 @@ def convert():
     init_vocab.extend(lst)
     newmerges = []
     for c in lst:
-        init_vocab.append(c + "Ġ")
         newmerges.append((c, "Ġ"))
     # merges = newmerges + merges
     for v in init_vocab:
         # if v not in tmpvocab["model"]["vocab"]:
         tmpvocab["model"]["vocab"][v] = curidx
         curidx += 1
+    merges = newmerges + merges
     for a, b in merges:
         try:
             assert a in init_vocab
