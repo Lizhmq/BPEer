@@ -8,8 +8,7 @@ def read_vocab(path):
     with open(path, "r") as f:
         for line in f:
             x, y = line.strip().split()[:2]
-            x, y = x.replace("</w>", "Ġ"), y.replace("</w>", "Ġ")
-            # x, y = x[1:], y[:-2]
+            x, y = x.replace("</w>", ""), y.replace("</w>", "")
             ret.append((x, y))
     return ret
 
@@ -17,20 +16,14 @@ def read_vocab(path):
 def convert():
     infile = "fastBPE/allvocab"
     # infile = "testo.merge"
-    outfile = "pathvocab.json"
+    outfile = "vocab.json"
     tmpvocab = json.load(open("template.json"))
     curidx = len(tmpvocab["model"]["vocab"])
     merges = read_vocab(infile)
     init_vocab = []
     lst = sorted(list(set("".join(x + y for x, y in merges))))
     init_vocab.extend(lst)
-    newmerges = []
-    for c in lst:
-        init_vocab.append(c + "Ġ")
-        newmerges.append((c, "Ġ"))
-    # merges = newmerges + merges
     for v in init_vocab:
-        # if v not in tmpvocab["model"]["vocab"]:
         tmpvocab["model"]["vocab"][v] = curidx
         curidx += 1
     for a, b in merges:
@@ -51,13 +44,13 @@ def convert():
 def test():
     tokenizer = Tokenizer.from_file("pathvocab.json")
     t = tokenizer.encode(
-        "program|block|if_statement|block|expression_statement|method_invocation|.Ġprogram|"
+        "program|block|if_statement|block|expression_statement|method_invocation|. program|"
     ).tokens
     id = tokenizer.encode(
-        "program|block|if_statement|block|expression_statement|method_invocation|.Ġprogram|"
+        "program|block|if_statement|block|expression_statement|method_invocation|. program|"
     ).ids
     off = tokenizer.encode(
-        "program|block|if_statement|block|expression_statement|method_invocation|.Ġprogram|"
+        "program|block|if_statement|block|expression_statement|method_invocation|. program|"
     ).offsets
     print(t)
     print(id)
